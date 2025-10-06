@@ -2,7 +2,13 @@ import { test, expect } from '@playwright/test';
 
 test('Login & Logout', async ({page}) => {
     await page.goto('https://www.demoblaze.com/index.html');
+
+    await expect(page).toHaveURL('https://www.demoblaze.com/index.html');
+    await expect(page).toHaveTitle('STORE');
+
     await page.click('#login2');
+
+    await expect(page.locator('#logInModal')).toBeVisible();
     
     // U can use .locator or directly .fill / .click
     // await page.locator('#loginusername').fill('test123');
