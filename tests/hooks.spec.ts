@@ -6,17 +6,21 @@ test.beforeEach(async ({ page }) => {
   await expect(page).toHaveTitle(/STORE/);
 
   // Login
-  await page.click("#login2");
+  await page.getByRole("link", { name: "Log in" }).click();
   await expect(page.locator("#logInModal")).toBeVisible();
-  await page.fill("#loginusername", "Test123");
-  await page.fill("#loginpassword", "Test123");
-  await page.click("button[onclick='logIn()']");
+
+  await page.locator("#loginusername").fill("Test123");
+  await page.locator("#loginpassword").fill("Test123");
+  await page.getByRole("button", { name: "Log in" }).click();
 });
 
 test.afterEach(async ({ page }) => {
-  //   Logout
-  await page.click("#logout2");
-  await expect(page.locator("#login2")).toBeVisible();
+  // Logout
+  const logout = page.locator("#logout2");
+  if (await logout.isVisible()) {
+    await logout.click();
+    await expect(page.locator("#login2")).toBeVisible();
+  }
 });
 
 test("Home page", async ({ page }) => {
@@ -27,9 +31,9 @@ test("Home page", async ({ page }) => {
 
 test("Add to cart", async ({ page }) => {
   //   Add to cart
-  await page.click("//a[normalize-space()='Samsung galaxy s6']");
+  await page.getByRole("link", { name: /samsung galaxy s6/i }).click();
   await expect(page.locator("h2.name")).toHaveText("Samsung galaxy s6");
-  await page.click("//a[normalize-space()='Add to cart']");
+  await page.getByRole("link", { name: /add to cart/i }).click();
 
   page.on("dialog", async (dialog) => {
     expect(dialog.message()).toContain("Product added.");
